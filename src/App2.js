@@ -8,7 +8,6 @@ import * as poseDetection from "@tensorflow-models/pose-detection";
 import { Physics, usePlane, useSphere } from "@react-three/cannon";
 
 function toggleFullScreen() {
-  console.log("boop");
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen();
   } else {
@@ -50,7 +49,11 @@ function Box(props) {
       onPointerOut={(e) => setHover(false)}
     >
       <boxGeometry args={[20, 20, 20]} />
-      <meshStandardMaterial color={hovered ? "hotpink" : "orange"} />
+      <meshStandardMaterial
+        color={hovered ? "hotpink" : "orange"}
+        transparent
+        opacity={0}
+      />
     </mesh>
   );
 }
@@ -74,7 +77,9 @@ function scaleValue(value, from, to) {
 function MoveNet({ video, detector, setRightHandPosition }) {
   const [videoReady, setVideoReady] = useState(false);
 
-  useFrame(async ({ clock, camera }) => {
+  useFrame(async ({ clock, camera, ...state }) => {
+    // console.log(state.scene.children);
+
     if (video) {
       video.onloadedmetadata = async () => {
         video.play();
@@ -95,8 +100,14 @@ function MoveNet({ video, detector, setRightHandPosition }) {
       )[0];
 
       const leftEyePosition = window.innerWidth - leftEye.x;
-      const rightEyePosition = window.innerWidth - rightEye.x;
+      const rightEyePosition = window.innerWidth / 2 - rightEye.x;
       const rightWristPosition = window.innerWidth - rightHand.x;
+
+      const middleEyes = leftEyePosition - rightEyePosition / 2;
+
+      //   console.log(middleEyes);
+
+      //   console.log(leftEyePosition);
 
       setRightHandPosition(rightWristPosition);
 
@@ -114,14 +125,25 @@ function MoveNet({ video, detector, setRightHandPosition }) {
       //   camera.position.x = 0 + Math.sin(clock.getElapsedTime()) * 30;
 
       let scaledCoordinate = scaleValue(
-        rightEyePosition,
+        middleEyes,
         [0, window.innerWidth],
-        [-40, 40]
+        [-70, 60]
       );
 
-      if (rightEye.score < 0.05) {
+      if (rightEye.score < 0.1) {
+        if (state.scene.children[2].material.opacity > 0) {
+          state.scene.children[2].material.opacity -= 0.05;
+          state.scene.children[3].children[0].material.opacity -= 0.05;
+        }
         camera.position.x = 0;
       } else {
+        // state.scene.children[3].material.opacity = 1;
+
+        if (state.scene.children[2].material.opacity < 1) {
+          state.scene.children[2].material.opacity += 0.05;
+          state.scene.children[3].children[0].material.opacity += 0.05;
+        }
+
         camera.position.x = scaledCoordinate;
       }
     }
@@ -143,15 +165,11 @@ const setupCamera = async () => {
   }
 
   const video = document.getElementById("video");
-  // video.width = window.innerWidth;
-  //   video.height = window.innerHeight;
 
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
       facingMode: "user",
-      //   width: window.innerWidth,
-      //   height: window.innerHeight,
     },
   });
   video.srcObject = stream;
@@ -207,23 +225,25 @@ export default function App2() {
         camera={{ fov: 75, position: [0, 0, 60], near: 10, far: 150 }}
       >
         <color attach="background" args={["#f0f0f0"]} />
-        {/* <fog attach="fog" args={['red', 60, 100]} /> */}
-        <ambientLight intensity={1.5} />
-        <pointLight position={[100, 10, -50]} intensity={20} castShadow />
-        <pointLight position={[-100, -100, -100]} intensity={10} color="red" />
+        {/* <fog attach="fog" args={["#d3d3d3", 60, 10]} /> */}
+        {/* <ambientLight intensity={5} /> */}
+        <pointLight position={[0, 0, 100]} intensity={3} castShadow />
+        <pointLight position={[0, 100, 100]} intensity={5} color="white" />
 
         <Box position={[0, 0, 0]} rightHandPosition={rightHandPosition} />
+        {/* <Box position={[0, 0, 0]} /> */}
 
         <ContactShadows
           rotation={[Math.PI / 2, 0, 0]}
-          position={[0, -30, 0]}
-          opacity={0.6}
+          position={[0, -40, 0]}
           width={130}
           height={130}
           blur={1}
           far={40}
+          transparent
+          opacity={0}
         />
-        <EffectComposer multisampling={0}>
+        {/* <EffectComposer multisampling={0}>
           <SSAO
             samples={31}
             radius={10}
@@ -231,32 +251,31 @@ export default function App2() {
             luminanceInfluence={0.1}
             color="red"
           />
-        </EffectComposer>
-        <group position={[0, -45, -10]}>
+        </EffectComposer> */}
+        <group position={[0, -95, -10]}>
           <Plane
-            color="hotpink"
+            color="#f6f6f6"
             rotation-x={-Math.PI / 2}
             position-z={2}
             scale={[200, 200, 0.2]}
           />
           <Plane
-            color="#e4be00"
+            color="#f6f6f6"
             rotation-x={-Math.PI / 2}
-            position-y={35}
-            position-z={-60}
-            scale={[200, 0.2, 80]}
+            position={[0, 0, -80]}
+            scale={[200, 0.2, 400]}
           />
           <Plane
-            color="#736fbd"
+            color="#f6f6f6"
             rotation-x={-Math.PI / 2}
-            position={[70, 35, 3.5]}
-            scale={[0.5, 400, 78]}
+            position={[100, 100, 3.5]}
+            scale={[0.2, 200, 200]}
           />
           <Plane
-            color="#736fbd"
+            color="#f6f6f6"
             rotation-x={-Math.PI / 2}
-            position={[-100, 35, 3.5]}
-            scale={[0.5, 400, 78]}
+            position={[-100, 100, 3.5]}
+            scale={[0.2, 200, 200]}
           />
         </group>
         {detector && video && (

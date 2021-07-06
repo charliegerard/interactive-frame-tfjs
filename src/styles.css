@@ -1,0 +1,36 @@
+@import url("https://rsms.me/inter/inter.css");
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+body {
+  font-family: "Inter var", sans-serif;
+  color: #101015;
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0iI2ZmNmI2YiIvPjwvc3ZnPg=="),
+    auto;
+}
+
+video {
+  position: absolute;
+  z-index: 0;
+}
+
+.fullscreen {
+  position: absolute;
+  z-index: 2;
+  bottom: 1em;
+  padding: 0.2em 0.5em;
+  background: none;
+  border: 1px solid white;
+  font-size: 1em;
+}

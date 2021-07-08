@@ -5,4 +5,9 @@ import "./styles.css";
 import App2 from "./App2";
 
 // ReactDOM.render(<App />, document.getElementById("root"));
-ReactDOM.render(<App2 />, document.getElementById("root"));
+ReactDOM.render(
+  <main>
+    <App2 />
+  </main>,
+  document.getElementById("root")
+);

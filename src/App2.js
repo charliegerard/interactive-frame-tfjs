@@ -17,13 +17,6 @@ function toggleFullScreen() {
   }
 }
 
-const coords = new THREE.Vector2(-1, -1);
-
-const handleMouseMove = (rightHandPosition) => {
-  coords.x = (rightHandPosition / window.innerWidth) * 2 - 1;
-  // coords.y = -(event.clientY / window.innerHeight) * 2 + 1;
-};
-
 function Box(props) {
   // This reference will give us direct access to the mesh
   const mesh = useRef();
@@ -102,6 +95,8 @@ function MoveNet({ video, detector, setRightHandPosition }) {
       const leftEyePosition = window.innerWidth - leftEye.x;
       const rightEyePosition = window.innerWidth / 2 - rightEye.x;
       const rightWristPosition = window.innerWidth - rightHand.x;
+      const leftEyeYPosition = leftEye.y;
+      const rightEyeYPosition = rightEye.y;
 
       const middleEyes = leftEyePosition - rightEyePosition / 2;
 
@@ -111,17 +106,6 @@ function MoveNet({ video, detector, setRightHandPosition }) {
 
       setRightHandPosition(rightWristPosition);
 
-      //var raycaster = new THREE.Raycaster();
-      //   raycaster.setFromCamera(coords, camera);
-      //   var intersects = raycaster.intersectObject(cube);
-
-      //   if (intersects.length > 0) {
-      //     //   cube.material.color.set(0xff0000);
-      //     console.log("touch");
-      //   } else {
-      //     //   cube.material.color.set(0x00ff00);
-      //   }
-
       //   camera.position.x = 0 + Math.sin(clock.getElapsedTime()) * 30;
 
       let scaledCoordinate = scaleValue(
@@ -130,22 +114,60 @@ function MoveNet({ video, detector, setRightHandPosition }) {
         [-70, 60]
       );
 
+      let scaledYCoordinate = scaleValue(
+        leftEyeYPosition,
+        [0, window.innerHeight],
+        [-20, 20]
+      );
+
       if (rightEye.score < 0.1) {
-        if (state.scene.children[2].material.opacity > 0) {
-          state.scene.children[2].material.opacity -= 0.05;
-          state.scene.children[3].children[0].material.opacity -= 0.05;
-        }
+        // if (state.scene.children[2].material.opacity > 0) {
+        //   state.scene.children[2].material.opacity -= 0.05;
+        //   state.scene.children[3].children[0].material.opacity -= 0.05;
+        // }
         camera.position.x = 0;
       } else {
         // state.scene.children[3].material.opacity = 1;
-
-        if (state.scene.children[2].material.opacity < 1) {
-          state.scene.children[2].material.opacity += 0.05;
-          state.scene.children[3].children[0].material.opacity += 0.05;
-        }
-
-        camera.position.x = scaledCoordinate;
+        // if (state.scene.children[2].material.opacity < 1) {
+        //   state.scene.children[2].material.opacity += 0.05;
+        //   state.scene.children[3].children[0].material.opacity += 0.05;
+        // }
+        camera.position.x = -scaledCoordinate / 2;
+        // camera.position.y = scaledYCoordinate;
+        // camera.rotation.y = scaledCoordinate / 100;
+        // camera.rotation.y += 0.001;
       }
+
+      // hand tracking
+
+      const handVector = new THREE.Vector3();
+      // the x coordinates seem to be flipped so i'm subtracting them from window innerWidth
+      handVector.x = (rightWristPosition / (window.innerWidth + 1200)) * 2 - 1;
+      handVector.y = 0;
+      handVector.z = 0;
+      //   //   handVector.y = -(hand.coordinates.y / window.innerHeight) * 2 + 1;
+
+      handVector.unproject(camera);
+      const cameraPosition = camera.position;
+      const dir = handVector.sub(cameraPosition).normalize();
+      const distance = -cameraPosition.z / dir.z;
+      const newPos = cameraPosition.clone().add(dir.multiplyScalar(distance));
+
+      if (newPos) {
+        // state.scene.children[2].position.x = newPos.x;
+        var raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(handVector, camera);
+        var intersects = raycaster.intersectObject(state.scene.children[2]); // cube
+
+        if (intersects.length > 0) {
+          state.scene.children[2].material.color.set(0xff0000);
+          console.log("touch");
+        } else {
+          state.scene.children[2].material.color.set(0x00ff00);
+        }
+      }
+
+      state.scene.children[2].material.opacity = 1;
     }
   });
   return null;
@@ -170,6 +192,8 @@ const setupCamera = async () => {
     audio: false,
     video: {
       facingMode: "user",
+      //   width: window.innerWidth,
+      //   height: window.innerHeight,
     },
   });
   video.srcObject = stream;
@@ -218,22 +242,24 @@ export default function App2() {
   fullScreenButton.onclick = () => toggleFullScreen();
 
   return (
-    <>
+    <section className="canvas">
       <Canvas
         shadows
         gl={{ alpha: false, antialias: false }}
         camera={{ fov: 75, position: [0, 0, 60], near: 10, far: 150 }}
+        style={{ height: 600, width: 600 }}
       >
         <color attach="background" args={["#f0f0f0"]} />
         {/* <fog attach="fog" args={["#d3d3d3", 60, 10]} /> */}
         {/* <ambientLight intensity={5} /> */}
         <pointLight position={[0, 0, 100]} intensity={3} castShadow />
-        <pointLight position={[0, 100, 100]} intensity={5} color="white" />
+        <pointLight position={[0, 150, 100]} intensity={5} color="lightgrey" />
+        {/* <pointLight position={[0, 100, 100]} intensity={5} color="white" /> */}
 
         <Box position={[0, 0, 0]} rightHandPosition={rightHandPosition} />
         {/* <Box position={[0, 0, 0]} /> */}
 
-        <ContactShadows
+        {/* <ContactShadows
           rotation={[Math.PI / 2, 0, 0]}
           position={[0, -40, 0]}
           width={130}
@@ -242,7 +268,7 @@ export default function App2() {
           far={40}
           transparent
           opacity={0}
-        />
+        /> */}
         {/* <EffectComposer multisampling={0}>
           <SSAO
             samples={31}
@@ -252,7 +278,7 @@ export default function App2() {
             color="red"
           />
         </EffectComposer> */}
-        <group position={[0, -95, -10]}>
+        <group position={[0, -100, -10]}>
           <Plane
             color="#f6f6f6"
             rotation-x={-Math.PI / 2}
@@ -286,6 +312,6 @@ export default function App2() {
           />
         )}
       </Canvas>
-    </>
+    </section>
   );
 }

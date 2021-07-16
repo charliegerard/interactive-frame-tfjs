@@ -490,9 +490,30 @@ class OrbitControls extends EventDispatcher {
       panStart.set(event.clientX, event.clientY);
     }
 
+    // Adding function to map mouse coordinates to min and max camera rotation
+    function scaleValue(value, from, to) {
+      var scale = (to[1] - to[0]) / (from[1] - from[0]);
+      var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+
+      return ~~(capped * scale + to[0]);
+    }
+
     // function handleMouseMoveRotate(event) {
     this.handleMouseMoveRotate = function (event) {
-      rotateEnd.set(event.clientX / 30, event.clientY / 30);
+      let scaledXCoordinate = scaleValue(
+        event.clientX,
+        [0, window.innerWidth],
+        [-50, 50]
+      );
+
+      let scaledYCoordinate = scaleValue(
+        event.clientY,
+        [0, window.innerHeight],
+        [-50, 50]
+      );
+
+      rotateEnd.set(scaledXCoordinate, scaledYCoordinate);
+      // rotateEnd.set(event.clientX / 30, event.clientY / 30);
 
       rotateDelta
         .subVectors(rotateEnd, rotateStart)

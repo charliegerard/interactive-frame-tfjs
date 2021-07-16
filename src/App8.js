@@ -37,7 +37,6 @@ function init() {
     5000
   );
   camera.position.set(0, 50, 100);
-  //   camera.position.set(0, 50, 1);
   scene.add(camera);
 
   cameraControls = new OrbitControls(camera, renderer.domElement);
@@ -57,7 +56,6 @@ function init() {
   //   topLeftCorner.set(-50.0, 100.1, 50.0);
 
   bottomRightCorner.set(50.0, -0.0, 10.0);
-
   bottomLeftCorner.set(-50.0, -0.0, 10.0);
   topLeftCorner.set(-50.0, 100.0, 10.0);
 
@@ -120,6 +118,15 @@ function init() {
   planeLeft.position.y = 50;
   planeLeft.rotateY(Math.PI / 2);
   scene.add(planeLeft);
+
+  // cube
+
+  const geometry = new THREE.BoxGeometry(10, 10, 10);
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.x = 0;
+  cube.position.y = 50;
+  scene.add(cube);
 
   // lights
   const mainLight = new THREE.PointLight(0xcccccc, 1.5, 250);

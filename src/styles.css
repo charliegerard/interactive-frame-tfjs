@@ -9,8 +9,8 @@ body,
   left: 0;
   height: 100%;
   width: 100%;
-  position: absolute;
-  z-index: 1;
+  /* position: absolute; */
+  /* z-index: 1; */
 }
 
 body {

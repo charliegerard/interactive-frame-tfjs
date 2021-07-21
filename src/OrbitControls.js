@@ -530,6 +530,41 @@ class OrbitControls extends EventDispatcher {
       scope.update();
     };
 
+    this.handleFaceMoveRotate = function (faceX, leftEyeYPosition) {
+      let scaledXCoordinate = scaleValue(
+        faceX,
+        // [800, window.innerWidth],
+        [800, 1300],
+        [-50, 50]
+      );
+
+      let scaledYCoordinate = scaleValue(
+        leftEyeYPosition,
+        [-25, 280],
+        [-50, 50]
+      );
+
+      // rotateEnd.set(-scaledXCoordinate, scaledYCoordinate);
+      rotateEnd.set(-scaledXCoordinate, 0);
+      // rotateEnd.x = -scaledXCoordinate;
+
+      // rotateEnd.set(event.clientX / 30, event.clientY / 30);
+
+      rotateDelta
+        .subVectors(rotateEnd, rotateStart)
+        .multiplyScalar(scope.rotateSpeed);
+
+      const element = scope.domElement;
+
+      rotateLeft((2 * Math.PI * rotateDelta.x) / element.clientHeight); // yes, height
+
+      rotateUp((2 * Math.PI * rotateDelta.y) / element.clientHeight);
+
+      rotateStart.copy(rotateEnd);
+
+      scope.update();
+    };
+
     function handleMouseMoveDolly(event) {
       dollyEnd.set(event.clientX, event.clientY);
 

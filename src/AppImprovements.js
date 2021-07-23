@@ -90,9 +90,15 @@ async function init() {
   //   bottomRightCorner.set(50.0, 0.0, 50.0);
   //   topLeftCorner.set(-50.0, 100.1, 50.0);
 
-  bottomRightCorner.set(50.0, -0.0, -30.0);
-  bottomLeftCorner.set(-50.0, -0.0, -30.0);
-  topLeftCorner.set(-50.0, 100.0, -30.0);
+  if (window.innerWidth < 800) {
+    bottomRightCorner.set(50.0, -0.0, -50.0);
+    bottomLeftCorner.set(-50.0, -0.0, -50.0);
+    topLeftCorner.set(-50.0, 100.0, -50.0);
+  } else {
+    bottomRightCorner.set(50.0, -0.0, -30.0);
+    bottomLeftCorner.set(-50.0, -0.0, -30.0);
+    topLeftCorner.set(-50.0, 100.0, -30.0);
+  }
 
   //   // set the projection matrix to encompass the portal's frame
   CameraUtils.frameCorners(
@@ -232,7 +238,7 @@ async function init() {
       });
 
       plant.castShadow = true;
-      if (window.innerWidth < 700) {
+      if (window.innerWidth < 800) {
         plant.scale.set(0.3, 0.3, 0.25);
       } else {
         plant.scale.set(0.2, 0.35, 0.2);

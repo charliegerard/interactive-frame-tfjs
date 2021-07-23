@@ -90,18 +90,12 @@ async function init() {
   //   bottomRightCorner.set(50.0, 0.0, 50.0);
   //   topLeftCorner.set(-50.0, 100.1, 50.0);
 
-  if (window.innerWidth < 800) {
-    bottomRightCorner.set(50.0, -0.0, -50.0);
-    bottomLeftCorner.set(-50.0, -0.0, -50.0);
-    topLeftCorner.set(-50.0, 100.0, -50.0);
-  } else {
-    // bottomRightCorner.set(50.0, -0.0, -30.0);
-    // bottomLeftCorner.set(-50.0, -0.0, -30.0);
-    // topLeftCorner.set(-50.0, 100.0, -30.0);
-    bottomRightCorner.set(50.0, -0.0, -50.0);
-    bottomLeftCorner.set(-50.0, -0.0, -50.0);
-    topLeftCorner.set(-50.0, 100.0, -50.0);
-  }
+  // bottomRightCorner.set(50.0, -0.0, -30.0);
+  // bottomLeftCorner.set(-50.0, -0.0, -30.0);
+  // topLeftCorner.set(-50.0, 100.0, -30.0);
+  bottomRightCorner.set(50.0, -0.0, 50.0);
+  bottomLeftCorner.set(-50.0, -0.0, 50.0);
+  topLeftCorner.set(-50.0, 100.0, 50.0);
 
   //   // set the projection matrix to encompass the portal's frame
   CameraUtils.frameCorners(

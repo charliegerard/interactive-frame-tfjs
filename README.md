@@ -8,6 +8,8 @@ I wanted to experiment with making interactive art pieces so this project is a P
 
 ## Demo
 
+![](public/demo-screen.jpg)
+
 You can try the [live demo](https://interactive-frame.netlify.app)!
 
 ## Local development

@@ -106,10 +106,17 @@ async function init() {
   //   false
   // );
 
+  // texture for frame
+  const texture = new THREE.TextureLoader().load(
+    "http://localhost:3000/white-wall-texture.jpeg"
+  );
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+
   // walls
   const planeTop = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeTop.position.y = 100;
   planeTop.rotateX(Math.PI / 2);
@@ -118,7 +125,7 @@ async function init() {
 
   const planeBottom = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeBottom.rotateX(-Math.PI / 2);
   planeBottom.receiveShadow = true;
@@ -126,7 +133,7 @@ async function init() {
 
   const planeFront = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeFront.position.z = 50;
   planeFront.position.y = 50;
@@ -136,7 +143,7 @@ async function init() {
 
   const planeBack = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeBack.position.z = -50;
   planeBack.position.y = 50;
@@ -145,7 +152,7 @@ async function init() {
 
   const planeRight = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeRight.position.x = 50;
   planeRight.position.y = 50;
@@ -154,11 +161,12 @@ async function init() {
 
   const planeLeft = new THREE.Mesh(
     planeGeo,
-    new THREE.MeshPhongMaterial({ color: 0xffffff })
+    new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture })
   );
   planeLeft.position.x = -50;
   planeLeft.position.y = 50;
   planeLeft.rotateY(Math.PI / 2);
+
   scene.add(planeLeft);
 
   /* 3D model */

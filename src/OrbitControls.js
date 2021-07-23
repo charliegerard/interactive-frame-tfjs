@@ -531,13 +531,24 @@ class OrbitControls extends EventDispatcher {
     };
 
     this.handleFaceMoveRotate = function (faceX, leftEyeYPosition) {
-      let scaledXCoordinate = scaleValue(
-        faceX,
-        // [800, window.innerWidth],
-        // [800, 1300],
-        [window.innerWidth / 2, window.innerWidth],
-        [-50, 50]
-      );
+      let scaledXCoordinate;
+      if (window.innerWidth < 700) {
+        scaledXCoordinate = scaleValue(
+          faceX,
+          // [800, window.innerWidth],
+          // [800, 1300],
+          [200, 1000],
+          [-50, 50]
+        );
+      } else {
+        scaledXCoordinate = scaleValue(
+          faceX,
+          // [800, window.innerWidth],
+          [800, 1300],
+          // [window.innerWidth / 2, window.innerWidth],
+          [-50, 50]
+        );
+      }
 
       let scaledYCoordinate = scaleValue(
         leftEyeYPosition,

@@ -4,11 +4,18 @@ import { CameraUtils } from "./CameraUtils";
 import { OrbitControls } from "./OrbitControls";
 import "@mediapipe/pose";
 import * as poseDetection from "@tensorflow-models/pose-detection";
+import { FBXLoader } from "./FBXLoader";
+
+/*
+Credit for 3d model: "Palm Plant" (https://skfb.ly/6VsxQ) by SomeKevin is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+*/
 
 let camera, scene, renderer;
 let cameraControls;
 let bottomLeftCorner, bottomRightCorner, topLeftCorner;
 let detector;
+
+let plant;
 
 let uniforms, displacement, noise, plane;
 
@@ -103,6 +110,7 @@ async function init() {
   );
   planeTop.position.y = 100;
   planeTop.rotateX(Math.PI / 2);
+  planeTop.receiveShadow = true;
   scene.add(planeTop);
 
   const planeBottom = new THREE.Mesh(
@@ -110,6 +118,7 @@ async function init() {
     new THREE.MeshPhongMaterial({ color: 0xffffff })
   );
   planeBottom.rotateX(-Math.PI / 2);
+  planeBottom.receiveShadow = true;
   scene.add(planeBottom);
 
   const planeFront = new THREE.Mesh(
@@ -127,6 +136,7 @@ async function init() {
   );
   planeBack.position.z = -50;
   planeBack.position.y = 50;
+  planeBack.receiveShadow = true;
   scene.add(planeBack);
 
   const planeRight = new THREE.Mesh(
@@ -156,57 +166,6 @@ async function init() {
   // scene.add(cube);
 
   // end cube
-
-  // const geometry2 = new THREE.PlaneGeometry(100, 100, 100, 100);
-
-  // uniforms = {
-  //   iTime: { value: 0 },
-  //   iResolution: { value: new THREE.Vector3() },
-  // };
-
-  // const material2 = new THREE.ShaderMaterial({
-  //   uniforms,
-  //   fragmentShader,
-  // });
-
-  // code for 3d shader
-  // uniforms = {
-  //   amplitude: { value: 1.0 },
-  //   color: { value: new THREE.Color(0xff2200) },
-  //   colorTexture: {
-  //     value: new THREE.TextureLoader().load("http://localhost:3000/water.jpeg"),
-  //   },
-  // };
-
-  // uniforms["colorTexture"].value.wrapS = uniforms["colorTexture"].value.wrapT =
-  //   THREE.RepeatWrapping;
-
-  // const material2 = new THREE.ShaderMaterial({
-  //   uniforms: uniforms,
-  //   vertexShader: document.getElementById("vertex").textContent,
-  //   fragmentShader: document.getElementById("fragment").textContent,
-  // });
-
-  //end of code for shader
-
-  // const geometry2 = new THREE.PlaneGeometry(100, 100, 50, 50);
-
-  // code for 3d shader
-
-  // displacement = new Float32Array(geometry2.attributes.position.count);
-
-  // noise = new Float32Array(geometry2.attributes.position.count);
-
-  // for (let i = 0; i < displacement.length; i++) {
-  //   noise[i] = Math.random() * 5;
-  // }
-
-  // geometry2.setAttribute(
-  //   "displacement",
-  //   new THREE.BufferAttribute(displacement, 1)
-  // );
-
-  //end of code for shader
 
   const geometry2 = new THREE.TorusGeometry(4, 3, 16, 100);
 
@@ -250,25 +209,74 @@ async function init() {
 
   // scene.add(donut3);
 
+  /* 3D model */
+
+  const loader = new FBXLoader();
+  loader.load(
+    "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    function (object) {
+      console.log("loaded");
+      plant = object;
+      plant.traverse(function (child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+
+          const texture = new THREE.TextureLoader().load(
+            "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
+          );
+
+          child.material.map = texture;
+          child.material.needsUpdate = true;
+        }
+      });
+
+      plant.castShadow = true;
+      if (window.innerWidth < 700) {
+        plant.scale.set(0.3, 0.3, 0.25);
+      } else {
+        plant.scale.set(0.2, 0.35, 0.2);
+      }
+
+      plant.position.set(0, 0, -40);
+
+      scene.add(plant);
+    },
+    function (e) {
+      console.log("loading", e);
+    },
+    function (e) {
+      console.error(e);
+    }
+  );
+
   // lights
-  const mainLight = new THREE.PointLight(0xcccccc, 1.5, 250);
-  mainLight.position.y = 60;
+  const mainLight = new THREE.PointLight(0xffffff, 1.2, 250);
+  // mainLight.position.y = 60;
+  mainLight.position.y = 50;
   scene.add(mainLight);
 
-  const greenLight = new THREE.PointLight(0xcccccc, 0.25, 1000);
-  greenLight.position.set(550, 50, 0);
-  scene.add(greenLight);
+  const pointlight = new THREE.PointLight(0xffffff, 1, 100);
+  pointlight.position.set(0, 50, -40);
+  pointlight.rotation.set(0, -180, 0);
+  // scene.add(pointlight);
 
-  const redLight = new THREE.PointLight(0xcccccc, 0.25, 1000);
-  redLight.position.set(-550, 50, 0);
-  scene.add(redLight);
+  const color = 0xffffff;
+  const intensity = 1;
+  const directionalLight = new THREE.DirectionalLight(color, intensity);
+  directionalLight.position.set(0, 60, 0);
+  directionalLight.castShadow = true;
+  directionalLight.target.position.set(0, 60, 30);
+  scene.add(directionalLight);
+  scene.add(directionalLight.target);
 
-  const blueLight = new THREE.PointLight(0xcccccc, 0.25, 1000);
-  blueLight.position.set(0, 50, 550);
-  scene.add(blueLight);
+  const light = new THREE.AmbientLight(0x404040, 1); // soft white light
+  light.position.set(0, 0, 0);
+  light.castShadow = true;
+  scene.add(light);
 
   window.addEventListener("resize", onWindowResize);
-  //   document.addEventListener("mousemove", onDocumentMouseMove, false);
+  document.addEventListener("mousemove", onDocumentMouseMove, false);
 }
 
 function onDocumentMouseMove(event) {
@@ -310,7 +318,6 @@ function getFaceCoordinates(poses) {
   const middleEyes = leftEyePosition - rightEyePosition / 2;
 
   if (leftEye.score > 0.7) {
-    console.log(middleEyes);
     onFaceMove(middleEyes, leftEyeYPosition);
   }
 }
@@ -324,6 +331,7 @@ async function animate(time) {
   const currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
   renderer.xr.enabled = false; // Avoid camera modification
   renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+  // renderer.shadowMap.enabled = true;
 
   // restore the original rendering properties
   renderer.xr.enabled = currentXrEnabled;
@@ -340,29 +348,6 @@ async function animate(time) {
     topLeftCorner,
     false
   );
-
-  time *= 0.01;
-  const canvas = renderer.domElement;
-  // uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
-  // uniforms.iTime.value = time;
-
-  // Code for 3d from shader
-  // plane.rotation.y = plane.rotation.z = 0.01 * time;
-
-  // uniforms["amplitude"].value = 2.5 * Math.sin(plane.rotation.y * 0.125);
-  // uniforms["color"].value.offsetHSL(0.0005, 0, 0);
-
-  // for (let i = 0; i < displacement.length; i++) {
-  //   displacement[i] = Math.sin(0.1 * i + time);
-
-  //   noise[i] += 0.5 * (0.5 - Math.random());
-  //   noise[i] = THREE.MathUtils.clamp(noise[i], -5, 5);
-
-  //   displacement[i] += noise[i];
-  // }
-
-  // plane.geometry.attributes.displacement.needsUpdate = true;
-  // end of code for shader
 
   renderer.render(scene, camera);
 }

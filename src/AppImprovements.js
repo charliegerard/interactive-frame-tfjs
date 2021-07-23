@@ -94,9 +94,9 @@ async function init() {
   //   topLeftCorner.set(-50.0, 100.1, 50.0);
 
   if (touchscreen) {
-    bottomRightCorner.set(50.0, -0.0, 0.0);
-    bottomLeftCorner.set(-50.0, -0.0, 0.0);
-    topLeftCorner.set(-50.0, 100.0, 0.0);
+    bottomRightCorner.set(50.0, -0.0, -10.0);
+    bottomLeftCorner.set(-50.0, -0.0, -10.0);
+    topLeftCorner.set(-50.0, 100.0, -10.0);
   } else {
     bottomRightCorner.set(50.0, -0.0, -30.0);
     bottomLeftCorner.set(-50.0, -0.0, -30.0);

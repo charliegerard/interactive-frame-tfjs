@@ -26,6 +26,11 @@ video {
   display: none;
 }
 
+#container {
+  position: absolute;
+  z-index: 1;
+}
+
 .fullscreen {
   position: absolute;
   z-index: 2;

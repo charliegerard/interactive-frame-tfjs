@@ -67,8 +67,13 @@ function scaleValue(value, from, to) {
   return ~~(capped * scale + to[0]);
 }
 
+function arcctg(x) {
+  return Math.PI / 2 - Math.atan(x);
+}
+
 function MoveNet({ video, detector, setRightHandPosition }) {
   const [videoReady, setVideoReady] = useState(false);
+  const [rotation, setRotation] = useState(0);
 
   useFrame(async ({ clock, camera, ...state }) => {
     // console.log(state.scene.children);
@@ -92,9 +97,12 @@ function MoveNet({ video, detector, setRightHandPosition }) {
         (keypoint) => keypoint.name === "right_wrist"
       )[0];
 
+      //   console.log(rightHand);
+
       const leftEyePosition = window.innerWidth - leftEye.x;
       const rightEyePosition = window.innerWidth / 2 - rightEye.x;
-      const rightWristPosition = window.innerWidth - rightHand.x;
+      const rightWristPosition =
+        rightHand.score > 0.2 && window.innerWidth - rightHand.x;
       const leftEyeYPosition = leftEye.y;
       const rightEyeYPosition = rightEye.y;
 
@@ -120,20 +128,30 @@ function MoveNet({ video, detector, setRightHandPosition }) {
         [-20, 20]
       );
 
+      const angleRotation = arcctg(50 / scaledCoordinate);
+      console.log(angleRotation);
+
       if (rightEye.score < 0.1) {
         // if (state.scene.children[2].material.opacity > 0) {
         //   state.scene.children[2].material.opacity -= 0.05;
         //   state.scene.children[3].children[0].material.opacity -= 0.05;
         // }
         camera.position.x = 0;
+        // camera.rotation.y = 0.1;
+        // console.log("here");
       } else {
         // state.scene.children[3].material.opacity = 1;
         // if (state.scene.children[2].material.opacity < 1) {
         //   state.scene.children[2].material.opacity += 0.05;
         //   state.scene.children[3].children[0].material.opacity += 0.05;
         // }
-        camera.position.x = -scaledCoordinate / 2;
-        // camera.position.y = scaledYCoordinate;
+        // camera.position.x = -scaledCoordinate;
+        camera.position.x = 0;
+
+        camera.rotation.y = angleRotation;
+        // camera.rotation.y = scaledCoordinate / 100;
+        // state.scene.children[2].position.x = -scaledCoordinate;
+        // camera.position.y = -scaledYCoordinate;
         // camera.rotation.y = scaledCoordinate / 100;
         // camera.rotation.y += 0.001;
       }
@@ -142,30 +160,33 @@ function MoveNet({ video, detector, setRightHandPosition }) {
 
       const handVector = new THREE.Vector3();
       // the x coordinates seem to be flipped so i'm subtracting them from window innerWidth
-      handVector.x = (rightWristPosition / (window.innerWidth + 1200)) * 2 - 1;
+      handVector.x = (rightWristPosition / (window.innerWidth + 1000)) * 2 - 1;
       handVector.y = 0;
       handVector.z = 0;
       //   //   handVector.y = -(hand.coordinates.y / window.innerHeight) * 2 + 1;
 
-      handVector.unproject(camera);
-      const cameraPosition = camera.position;
-      const dir = handVector.sub(cameraPosition).normalize();
-      const distance = -cameraPosition.z / dir.z;
-      const newPos = cameraPosition.clone().add(dir.multiplyScalar(distance));
+      // handVector.unproject(camera);
+      // const cameraPosition = camera.position;
+      // const dir = handVector.sub(cameraPosition).normalize();
+      // const distance = -cameraPosition.z / dir.z;
+      // const newPos = cameraPosition.clone().add(dir.multiplyScalar(distance));
 
-      if (newPos) {
-        // state.scene.children[2].position.x = newPos.x;
-        var raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(handVector, camera);
-        var intersects = raycaster.intersectObject(state.scene.children[2]); // cube
+      // if (newPos) {
+      //   // state.scene.children[2].position.x = newPos.x;
+      //   var raycaster = new THREE.Raycaster();
+      //   raycaster.setFromCamera(handVector, camera);
+      //   var intersects = raycaster.intersectObject(state.scene.children[2]); // cube
 
-        if (intersects.length > 0) {
-          state.scene.children[2].material.color.set(0xff0000);
-          console.log("touch");
-        } else {
-          state.scene.children[2].material.color.set(0x00ff00);
-        }
-      }
+      //   if (intersects.length > 0) {
+      //     state.scene.children[2].material.color.set(0xff0000);
+      //     // setRotation(0.01);
+      //     console.log("touch");
+      //   } else {
+      //     state.scene.children[2].material.color.set(0x00ff00);
+      //   }
+      // }
+
+      // state.scene.children[2].rotation.y += rotation;
 
       state.scene.children[2].material.opacity = 1;
     }
@@ -256,7 +277,11 @@ export default function App2() {
         <pointLight position={[0, 150, 100]} intensity={5} color="lightgrey" />
         {/* <pointLight position={[0, 100, 100]} intensity={5} color="white" /> */}
 
-        <Box position={[0, 0, 0]} rightHandPosition={rightHandPosition} />
+        <Box
+          position={[0, 0, 0]}
+          rotation={[0, 10, 10]}
+          rightHandPosition={rightHandPosition}
+        />
         {/* <Box position={[0, 0, 0]} /> */}
 
         {/* <ContactShadows
@@ -278,7 +303,7 @@ export default function App2() {
             color="red"
           />
         </EffectComposer> */}
-        <group position={[0, -100, -10]}>
+        <group position={[0, -100, -500]}>
           <Plane
             color="#f6f6f6"
             rotation-x={-Math.PI / 2}

@@ -169,8 +169,8 @@ async function init() {
 
   const loader = new FBXLoader();
   loader.load(
-    // "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
-    "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
+    // "http://localhost:3000/palm-plant/source/Pflanze.fbx",
     function (object) {
       plant = object;
       plant.traverse(function (child) {
@@ -179,8 +179,8 @@ async function init() {
           child.receiveShadow = true;
 
           const texture = new THREE.TextureLoader().load(
-            // "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
-            "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
+            "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
+            // "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
           );
 
           child.material.map = texture;

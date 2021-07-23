@@ -95,9 +95,12 @@ async function init() {
     bottomLeftCorner.set(-50.0, -0.0, -50.0);
     topLeftCorner.set(-50.0, 100.0, -50.0);
   } else {
-    bottomRightCorner.set(50.0, -0.0, -30.0);
-    bottomLeftCorner.set(-50.0, -0.0, -30.0);
-    topLeftCorner.set(-50.0, 100.0, -30.0);
+    // bottomRightCorner.set(50.0, -0.0, -30.0);
+    // bottomLeftCorner.set(-50.0, -0.0, -30.0);
+    // topLeftCorner.set(-50.0, 100.0, -30.0);
+    bottomRightCorner.set(50.0, -0.0, -50.0);
+    bottomLeftCorner.set(-50.0, -0.0, -50.0);
+    topLeftCorner.set(-50.0, 100.0, -50.0);
   }
 
   //   // set the projection matrix to encompass the portal's frame
@@ -241,7 +244,8 @@ async function init() {
       if (window.innerWidth < 800) {
         plant.scale.set(0.3, 0.3, 0.25);
       } else {
-        plant.scale.set(0.2, 0.35, 0.2);
+        // plant.scale.set(0.2, 0.35, 0.2);
+        plant.scale.set(0.3, 0.3, 0.25);
       }
 
       plant.position.set(0, 0, -40);

@@ -1,5 +1,4 @@
 self.addEventListener("install", function (e) {
-  console.log("boop");
   e.waitUntil(
     caches.open("sw-cache").then(function (cache) {
       return cache.add("index.html");

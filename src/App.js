@@ -108,7 +108,8 @@ async function init() {
 
   // texture for frame
   const texture = new THREE.TextureLoader().load(
-    "http://localhost:3000/white-wall-texture.jpeg"
+    // "http://localhost:3000/white-wall-texture.jpeg"
+    "https://interactive-frame.netlify.app/white-wall-texture.jpeg"
   );
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
@@ -173,8 +174,8 @@ async function init() {
 
   const loader = new FBXLoader();
   loader.load(
-    // "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
-    "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    "https://interactive-frame.netlify.app/palm-plant/source/Pflanze.fbx",
+    // "http://localhost:3000/palm-plant/source/Pflanze.fbx",
     function (object) {
       plant = object;
       plant.traverse(function (child) {
@@ -183,8 +184,8 @@ async function init() {
           child.receiveShadow = true;
 
           const texture = new THREE.TextureLoader().load(
-            // "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
-            "http://localhost:3000/palm-plant/textures/Pflanze_Albedo_small.png"
+            "https://interactive-frame.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
+            // "http://localhost:3000/palm-plant/textures/Pflanze_Albedo_small.png"
           );
 
           child.material.map = texture;

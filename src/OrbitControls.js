@@ -531,35 +531,24 @@ class OrbitControls extends EventDispatcher {
     };
 
     this.handleFaceMoveRotate = function (faceX, leftEyeYPosition) {
-      // console.log(faceX);
+      let touchscreen = "ontouchstart" in window ? true : false;
+      // console.log(leftEyeYPosition);
       let scaledXCoordinate;
-      if (window.innerWidth < 700) {
-        scaledXCoordinate = scaleValue(
-          faceX,
-          // [800, window.innerWidth],
-          // [800, 1300],
-          [200, 1000],
-          [-50, 50]
-        );
+
+      if (touchscreen) {
+        scaledXCoordinate = scaleValue(faceX, [350, 500], [-50, 50]);
       } else {
-        scaledXCoordinate = scaleValue(
-          faceX,
-          // [800, window.innerWidth],
-          // [800, 1300],
-          [350, 500],
-          // [window.innerWidth / 2, window.innerWidth],
-          [-50, 50]
-        );
+        scaledXCoordinate = scaleValue(faceX, [600, 900], [-50, 50]);
       }
 
       let scaledYCoordinate = scaleValue(
         leftEyeYPosition,
-        [-25, 280],
+        [20, 300],
         [-50, 50]
       );
 
-      // rotateEnd.set(-scaledXCoordinate, scaledYCoordinate);
-      rotateEnd.set(-scaledXCoordinate, 0);
+      rotateEnd.set(-scaledXCoordinate, -scaledYCoordinate);
+      // rotateEnd.set(-scaledXCoordinate, 0);
       // rotateEnd.x = -scaledXCoordinate;
 
       // rotateEnd.set(event.clientX / 30, event.clientY / 30);

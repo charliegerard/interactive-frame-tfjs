@@ -19,6 +19,9 @@ let plant;
 
 let uniforms, displacement, noise, plane;
 
+/* Detect if device is a touch screen or not */
+let touchscreen = "ontouchstart" in window ? true : false;
+
 const setupCamera = async () => {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error(
@@ -90,14 +93,17 @@ async function init() {
   //   bottomRightCorner.set(50.0, 0.0, 50.0);
   //   topLeftCorner.set(-50.0, 100.1, 50.0);
 
-  // bottomRightCorner.set(50.0, -0.0, -30.0);
-  // bottomLeftCorner.set(-50.0, -0.0, -30.0);
-  // topLeftCorner.set(-50.0, 100.0, -30.0);
-  bottomRightCorner.set(50.0, -0.0, 0.0);
-  bottomLeftCorner.set(-50.0, -0.0, 0.0);
-  topLeftCorner.set(-50.0, 100.0, 0.0);
+  if (touchscreen) {
+    bottomRightCorner.set(50.0, -0.0, 0.0);
+    bottomLeftCorner.set(-50.0, -0.0, 0.0);
+    topLeftCorner.set(-50.0, 100.0, 0.0);
+  } else {
+    bottomRightCorner.set(50.0, -0.0, -30.0);
+    bottomLeftCorner.set(-50.0, -0.0, -30.0);
+    topLeftCorner.set(-50.0, 100.0, -30.0);
+  }
 
-  //   // set the projection matrix to encompass the portal's frame
+  // set the projection matrix to encompass the portal's frame
   CameraUtils.frameCorners(
     camera,
     bottomLeftCorner,
@@ -161,64 +167,12 @@ async function init() {
   planeLeft.rotateY(Math.PI / 2);
   scene.add(planeLeft);
 
-  // cube
-  const geometry = new THREE.BoxGeometry(10, 10, 10);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  cube.position.x = 0;
-  cube.position.y = 50;
-  // scene.add(cube);
-
-  // end cube
-
-  const geometry2 = new THREE.TorusGeometry(4, 3, 16, 100);
-
-  const texture = new THREE.TextureLoader().load(
-    "http://localhost:3000/donut.jpeg"
-  );
-
-  const material2 = new THREE.MeshBasicMaterial({ map: texture });
-
-  plane = new THREE.Mesh(geometry2, material2);
-  plane.material.side = THREE.DoubleSide;
-  plane.position.x = 0;
-  plane.position.y = 50;
-  // plane.position.z = -50;
-
-  // scene.add(plane);
-
-  // donut 2
-  const geometry3 = new THREE.TorusGeometry(4, 3, 16, 100);
-
-  const material3 = new THREE.MeshBasicMaterial({ map: texture });
-
-  const donut2 = new THREE.Mesh(geometry3, material3);
-  donut2.material.side = THREE.DoubleSide;
-  donut2.position.x = -30;
-  donut2.position.y = 40;
-  donut2.position.z = -40;
-
-  // scene.add(donut2);
-
-  // donut 3
-  const geometry4 = new THREE.TorusGeometry(4, 3, 16, 100);
-
-  const material4 = new THREE.MeshBasicMaterial({ map: texture });
-
-  const donut3 = new THREE.Mesh(geometry4, material4);
-  donut3.material.side = THREE.DoubleSide;
-  donut3.position.x = 20;
-  donut3.position.y = 50;
-  donut3.position.z = 20;
-
-  // scene.add(donut3);
-
   /* 3D model */
 
   const loader = new FBXLoader();
   loader.load(
-    "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
-    // "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    // "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
+    "http://localhost:3000/palm-plant/source/Pflanze.fbx",
     function (object) {
       console.log("loaded");
       plant = object;
@@ -228,8 +182,8 @@ async function init() {
           child.receiveShadow = true;
 
           const texture = new THREE.TextureLoader().load(
-            "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
-            // "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
+            // "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
+            "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
           );
 
           child.material.map = texture;
@@ -238,14 +192,17 @@ async function init() {
       });
 
       plant.castShadow = true;
-      if (window.innerWidth < 800) {
+      if (touchscreen) {
         plant.scale.set(0.3, 0.3, 0.25);
       } else {
-        // plant.scale.set(0.2, 0.35, 0.2);
-        plant.scale.set(0.3, 0.3, 0.25);
+        plant.scale.set(0.2, 0.35, 0.2);
       }
 
-      plant.position.set(0, 0, -40);
+      if (touchscreen) {
+        plant.position.set(0, 0, -10);
+      } else {
+        plant.position.set(0, 0, -40);
+      }
 
       scene.add(plant);
     },

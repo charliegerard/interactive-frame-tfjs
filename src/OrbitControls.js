@@ -531,6 +531,7 @@ class OrbitControls extends EventDispatcher {
     };
 
     this.handleFaceMoveRotate = function (faceX, leftEyeYPosition) {
+      // console.log(faceX);
       let scaledXCoordinate;
       if (window.innerWidth < 700) {
         scaledXCoordinate = scaleValue(
@@ -545,7 +546,7 @@ class OrbitControls extends EventDispatcher {
           faceX,
           // [800, window.innerWidth],
           // [800, 1300],
-          [200, 1000],
+          [200, 500],
           // [window.innerWidth / 2, window.innerWidth],
           [-50, 50]
         );

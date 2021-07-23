@@ -4,18 +4,18 @@
   "description": "Test PWA",
   "icons": [
     {
-      "src": "/plant.jpeg",
+      "src": "plant.jpeg",
       "type": "image/jpeg",
       "sizes": "144x144"
     },
     {
-      "src": "/plant.jpeg",
+      "src": "plant.jpeg",
       "type": "image/jpeg",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "/plant.jpeg",
+      "src": "plant.jpeg",
       "type": "image/jpeg",
       "sizes": "512x512",
       "purpose": "any maskable"

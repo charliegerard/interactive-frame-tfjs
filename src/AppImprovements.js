@@ -196,7 +196,7 @@ async function init() {
       }
 
       if (touchscreen) {
-        plant.position.set(0, 0, -10);
+        plant.position.set(0, 0, -20);
       } else {
         plant.position.set(0, 0, -40);
       }

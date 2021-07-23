@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
-import * as THREE from "./three.module";
-import { CameraUtils } from "./CameraUtils";
+import React, { useEffect } from "react";
+import * as THREE from "./utils/three.module";
+import { CameraUtils } from "./utils/CameraUtils";
 import { OrbitControls } from "./OrbitControls";
 import "@mediapipe/pose";
 import * as poseDetection from "@tensorflow-models/pose-detection";
-import { FBXLoader } from "./FBXLoader";
+import { FBXLoader } from "./utils/FBXLoader";
 
 /*
 Credit for 3d model: "Palm Plant" (https://skfb.ly/6VsxQ) by SomeKevin is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
@@ -16,8 +16,6 @@ let bottomLeftCorner, bottomRightCorner, topLeftCorner;
 let detector;
 
 let plant;
-
-let uniforms, displacement, noise, plane;
 
 /* Detect if device is a touch screen or not */
 let touchscreen = "ontouchstart" in window ? true : false;
@@ -171,10 +169,9 @@ async function init() {
 
   const loader = new FBXLoader();
   loader.load(
-    "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
-    // "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    // "https://interactive-frames.netlify.app/palm-plant/source/Pflanze.fbx",
+    "http://localhost:3000/palm-plant/source/Pflanze.fbx",
     function (object) {
-      console.log("loaded");
       plant = object;
       plant.traverse(function (child) {
         if (child.isMesh) {
@@ -182,8 +179,8 @@ async function init() {
           child.receiveShadow = true;
 
           const texture = new THREE.TextureLoader().load(
-            "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
-            // "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
+            // "https://interactive-frames.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
+            "http://localhost:3000/palm-plant/textures/Pflanze_Albedo.png"
           );
 
           child.material.map = texture;
@@ -220,11 +217,6 @@ async function init() {
   mainLight.position.y = 50;
   scene.add(mainLight);
 
-  const pointlight = new THREE.PointLight(0xffffff, 1, 100);
-  pointlight.position.set(0, 50, -40);
-  pointlight.rotation.set(0, -180, 0);
-  // scene.add(pointlight);
-
   const color = 0xffffff;
   const intensity = 1;
   const directionalLight = new THREE.DirectionalLight(color, intensity);
@@ -250,8 +242,6 @@ function onDocumentMouseMove(event) {
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
-  //   camera.updateProjectionMatrix();
-
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
@@ -276,7 +266,6 @@ function getFaceCoordinates(poses) {
   const rightWristPosition =
     rightHand.score > 0.2 && window.innerWidth - rightHand.x;
   const leftEyeYPosition = leftEye.y;
-  //   console.log(leftEyeYPosition);
   const rightEyeYPosition = rightEye.y;
 
   const middleEyes = leftEyePosition - rightEyePosition / 2;

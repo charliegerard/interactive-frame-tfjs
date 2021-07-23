@@ -1,0 +1,28 @@
+{
+  "short_name": "Frame",
+  "name": "Interactive frame",
+  "description": "Test PWA",
+  "icons": [
+    {
+      "src": "/plant.jpeg",
+      "type": "image/jpeg",
+      "sizes": "144x144"
+    },
+    {
+      "src": "/plant.jpeg",
+      "type": "image/jpeg",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/plant.jpeg",
+      "type": "image/jpeg",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#000000",
+  "display": "standalone",
+  "theme_color": "#4dbaa8"
+}

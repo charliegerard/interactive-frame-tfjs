@@ -545,7 +545,7 @@ class OrbitControls extends EventDispatcher {
           faceX,
           // [800, window.innerWidth],
           // [800, 1300],
-          [0, window.innerWidth],
+          [800, 1300],
           // [window.innerWidth / 2, window.innerWidth],
           [-50, 50]
         );

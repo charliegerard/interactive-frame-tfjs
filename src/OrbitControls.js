@@ -532,7 +532,7 @@ class OrbitControls extends EventDispatcher {
 
     this.handleFaceMoveRotate = function (faceX, leftEyeYPosition) {
       let touchscreen = "ontouchstart" in window ? true : false;
-      let scaledXCoordinate;
+      let scaledXCoordinate, scaledYCoordinate;
 
       if (touchscreen) {
         // scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
@@ -540,7 +540,7 @@ class OrbitControls extends EventDispatcher {
         scaledXCoordinate = scaleValue(
           faceX,
           [0, window.innerWidth],
-          [-100, 100]
+          [-120, 100]
         );
       } else {
         scaledXCoordinate = scaleValue(
@@ -550,7 +550,11 @@ class OrbitControls extends EventDispatcher {
         );
       }
 
-      let scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-85, 85]);
+      if (touchscreen) {
+        scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-90, 85]);
+      } else {
+        scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-85, 85]);
+      }
 
       rotateEnd.set(-scaledXCoordinate, -scaledYCoordinate);
       // rotateEnd.set(-scaledXCoordinate, 0);

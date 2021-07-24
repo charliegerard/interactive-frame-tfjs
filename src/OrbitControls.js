@@ -540,7 +540,7 @@ class OrbitControls extends EventDispatcher {
         scaledXCoordinate = scaleValue(
           faceX,
           [0, window.innerWidth],
-          [-120, 100]
+          [-150, 100]
         );
       } else {
         scaledXCoordinate = scaleValue(
@@ -551,7 +551,7 @@ class OrbitControls extends EventDispatcher {
       }
 
       if (touchscreen) {
-        scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-90, 85]);
+        scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-100, 85]);
       } else {
         scaledYCoordinate = scaleValue(leftEyeYPosition, [0, 480], [-85, 85]);
       }

@@ -535,7 +535,13 @@ class OrbitControls extends EventDispatcher {
       let scaledXCoordinate;
 
       if (touchscreen) {
-        scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
+        // scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
+        // scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
+        scaledXCoordinate = scaleValue(
+          faceX,
+          [0, window.innerWidth],
+          [-85, 85]
+        );
       } else {
         scaledXCoordinate = scaleValue(
           faceX,

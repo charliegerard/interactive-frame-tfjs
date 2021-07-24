@@ -540,7 +540,7 @@ class OrbitControls extends EventDispatcher {
         scaledXCoordinate = scaleValue(
           faceX,
           [0, window.innerWidth],
-          [-85, 85]
+          [-100, 100]
         );
       } else {
         scaledXCoordinate = scaleValue(

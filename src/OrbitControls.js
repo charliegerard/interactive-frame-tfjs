@@ -535,8 +535,6 @@ class OrbitControls extends EventDispatcher {
       let scaledXCoordinate, scaledYCoordinate;
 
       if (touchscreen) {
-        // scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
-        // scaledXCoordinate = scaleValue(faceX, [350, 500], [-120, 100]);
         scaledXCoordinate = scaleValue(
           faceX,
           [0, window.innerWidth],
@@ -558,9 +556,6 @@ class OrbitControls extends EventDispatcher {
 
       rotateEnd.set(-scaledXCoordinate, -scaledYCoordinate);
       // rotateEnd.set(-scaledXCoordinate, 0);
-      // rotateEnd.x = -scaledXCoordinate;
-
-      // rotateEnd.set(event.clientX / 30, event.clientY / 30);
 
       rotateDelta
         .subVectors(rotateEnd, rotateStart)

@@ -10,6 +10,11 @@ import { FBXLoader } from "./utils/FBXLoader";
 Credit for 3d model: "Palm Plant" (https://skfb.ly/6VsxQ) by SomeKevin is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 */
 
+const HOST =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://interactive-frame.netlify.app";
+
 let camera, scene, renderer;
 let cameraControls;
 let bottomLeftCorner, bottomRightCorner, topLeftCorner;
@@ -60,7 +65,6 @@ async function init() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
-  // renderer.localClippingEnabled = true;
   renderer.shadowMap.enabled = true;
   renderer.shadowMapSoft = true;
 
@@ -100,19 +104,9 @@ async function init() {
     topLeftCorner.set(-50.0, 100.0, -30.0);
   }
 
-  // set the projection matrix to encompass the portal's frame
-  // CameraUtils.frameCorners(
-  //   camera,
-  //   bottomLeftCorner,
-  //   bottomRightCorner,
-  //   topLeftCorner,
-  //   false
-  // );
-
   // texture for frame
   const texture = new THREE.TextureLoader().load(
-    // "http://localhost:3000/white-wall-texture.jpeg"
-    "https://interactive-frame.netlify.app/white-wall-texture.jpeg"
+    `${HOST}/white-wall-texture.jpeg`
   );
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
@@ -175,11 +169,9 @@ async function init() {
   scene.add(planeLeft);
 
   /* 3D model */
-
   const loader = new FBXLoader();
   loader.load(
-    "https://interactive-frame.netlify.app/palm-plant/source/Pflanze.fbx",
-    // "http://localhost:3000/palm-plant/source/Pflanze.fbx",
+    `${HOST}/palm-plant/source/Pflanze.fbx`,
     function (object) {
       plant = object;
       plant.traverse(function (child) {
@@ -188,8 +180,7 @@ async function init() {
           child.receiveShadow = false;
 
           const texture = new THREE.TextureLoader().load(
-            "https://interactive-frame.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
-            // "http://localhost:3000/palm-plant/textures/Pflanze_Albedo_small.png"
+            `${HOST}/palm-plant/textures/Pflanze_Albedo.png`
           );
 
           child.material.map = texture;
@@ -237,10 +228,6 @@ async function init() {
   // scene.add(directionalLight);
   // scene.add(directionalLight.target);
 
-  /*
- test
-  */
-
   const Dlight = new THREE.DirectionalLight(0x404040, 1);
   Dlight.position.set(100, 120, 300);
   Dlight.castShadow = true;
@@ -249,11 +236,7 @@ async function init() {
   Dlight.shadow.camera.right = 200;
   Dlight.shadow.camera.left = -200;
   Dlight.shadow.mapSize.set(4096, 4096);
-  // Dlight.target.position.set(0, 60, -40);
   scene.add(Dlight);
-  // scene.add(Dlight.target);
-
-  /* end test*/
 
   const light = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
   light.position.set(0, 0, 300);
@@ -293,12 +276,9 @@ function getFaceCoordinates(poses) {
     (keypoint) => keypoint.name === "right_eye"
   )[0];
 
-  // the coordinates for the eyes will be based on the default size of the video element (640x480) so we need to do some calculation to make it match the window size instead
-
   /* 
-    min 0 - max 640
-    min 0 - max window.innerWidth (1300)
-
+    The coordinates for the eyes will be based on the default size of the video element (640x480).
+    We need to do some calculation to make it match the window size instead
   */
 
   if (leftEye.score > 0.7) {
@@ -328,22 +308,10 @@ function getFaceCoordinates(poses) {
 async function animate() {
   requestAnimationFrame(animate);
 
-  // save the original camera properties
-  // const currentRenderTarget = renderer.getRenderTarget();
-  // const currentXrEnabled = renderer.xr.enabled;
-  // const currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
-  // renderer.xr.enabled = false; // Avoid camera modification
-  // renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
-  // renderer.shadowMap.enabled = true;
-
-  // restore the original rendering properties
-  // renderer.xr.enabled = currentXrEnabled;
-  // renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
-  // renderer.setRenderTarget(currentRenderTarget);
-
   const poses = await detector?.estimatePoses(video);
   getFaceCoordinates(poses);
 
+  // set the projection matrix to encompass the portal's frame
   CameraUtils.frameCorners(
     camera,
     bottomLeftCorner,

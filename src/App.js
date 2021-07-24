@@ -60,7 +60,9 @@ async function init() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
-  renderer.localClippingEnabled = true;
+  // renderer.localClippingEnabled = true;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMapSoft = true;
 
   // scene
   scene = new THREE.Scene();
@@ -158,6 +160,7 @@ async function init() {
   );
   planeRight.position.x = 50;
   planeRight.position.y = 50;
+  planeRight.receiveShadow = true;
   planeRight.rotateY(-Math.PI / 2);
   scene.add(planeRight);
 
@@ -167,8 +170,8 @@ async function init() {
   );
   planeLeft.position.x = -50;
   planeLeft.position.y = 50;
+  planeLeft.receiveShadow = true;
   planeLeft.rotateY(Math.PI / 2);
-
   scene.add(planeLeft);
 
   /* 3D model */
@@ -182,7 +185,7 @@ async function init() {
       plant.traverse(function (child) {
         if (child.isMesh) {
           child.castShadow = true;
-          child.receiveShadow = true;
+          child.receiveShadow = false;
 
           const texture = new THREE.TextureLoader().load(
             "https://interactive-frame.netlify.app/palm-plant/textures/Pflanze_Albedo.png"
@@ -195,10 +198,11 @@ async function init() {
       });
 
       plant.castShadow = true;
+      plant.receiveShadow = false;
       if (touchscreen) {
         plant.scale.set(0.3, 0.3, 0.25);
       } else {
-        plant.scale.set(0.2, 0.35, 0.2);
+        plant.scale.set(0.22, 0.35, 0.22);
       }
 
       if (touchscreen) {
@@ -216,26 +220,47 @@ async function init() {
   );
 
   // lights
-  const mainLight = new THREE.PointLight(0xffffff, 1.2, 250);
+  const mainLight = new THREE.PointLight(0xffffff, 1, 250);
   mainLight.position.y = 50;
-  scene.add(mainLight);
+  mainLight.position.z = 10;
+  // scene.add(mainLight);
 
   const color = 0xffffff;
+  // const color = 0xdfebff;
+  // const intensity = 1;
   const intensity = 1;
   const directionalLight = new THREE.DirectionalLight(color, intensity);
   directionalLight.position.set(0, 60, 0);
+  // directionalLight.position.set(100, 100, 50);
   directionalLight.castShadow = true;
-  directionalLight.target.position.set(0, 60, 30);
-  scene.add(directionalLight);
-  scene.add(directionalLight.target);
+  // directionalLight.target.position.set(0, 20, -40);
+  // scene.add(directionalLight);
+  // scene.add(directionalLight.target);
 
-  const light = new THREE.AmbientLight(0x404040, 1); // soft white light
-  light.position.set(0, 0, 0);
-  light.castShadow = true;
+  /*
+ test
+  */
+
+  const Dlight = new THREE.DirectionalLight(0x404040, 1);
+  Dlight.position.set(100, 120, 300);
+  Dlight.castShadow = true;
+  Dlight.shadow.camera.top = 200;
+  Dlight.shadow.camera.bottom = -200;
+  Dlight.shadow.camera.right = 200;
+  Dlight.shadow.camera.left = -200;
+  Dlight.shadow.mapSize.set(4096, 4096);
+  // Dlight.target.position.set(0, 60, -40);
+  scene.add(Dlight);
+  // scene.add(Dlight.target);
+
+  /* end test*/
+
+  const light = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
+  light.position.set(0, 0, 300);
   scene.add(light);
 
   window.addEventListener("resize", onWindowResize);
-  // document.addEventListener("mousemove", onDocumentMouseMove, false);
+  document.addEventListener("mousemove", onDocumentMouseMove, false);
 }
 
 function onDocumentMouseMove(event) {
@@ -276,8 +301,6 @@ function getFaceCoordinates(poses) {
 
   */
 
-  // let scaledYCoordinate = scaleValue(leftEye.x, [0, 640], [-85, 85]);
-
   if (leftEye.score > 0.7) {
     let scaledLeftEyeXCoordinate = scaleValue(
       leftEye.x,
@@ -292,7 +315,7 @@ function getFaceCoordinates(poses) {
     );
 
     const leftEyePosition = window.innerWidth - scaledLeftEyeXCoordinate;
-    const rightEyePosition = window.innerWidth - scaledRightEyeXCoordinate;
+    // const rightEyePosition = window.innerWidth - scaledRightEyeXCoordinate;
     const leftEyeYPosition = leftEye.y;
 
     // const middleEyes = leftEyePosition - rightEyePosition / 2;
@@ -306,17 +329,17 @@ async function animate() {
   requestAnimationFrame(animate);
 
   // save the original camera properties
-  const currentRenderTarget = renderer.getRenderTarget();
-  const currentXrEnabled = renderer.xr.enabled;
-  const currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
-  renderer.xr.enabled = false; // Avoid camera modification
-  renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+  // const currentRenderTarget = renderer.getRenderTarget();
+  // const currentXrEnabled = renderer.xr.enabled;
+  // const currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+  // renderer.xr.enabled = false; // Avoid camera modification
+  // renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
   // renderer.shadowMap.enabled = true;
 
   // restore the original rendering properties
-  renderer.xr.enabled = currentXrEnabled;
-  renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
-  renderer.setRenderTarget(currentRenderTarget);
+  // renderer.xr.enabled = currentXrEnabled;
+  // renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
+  // renderer.setRenderTarget(currentRenderTarget);
 
   const poses = await detector?.estimatePoses(video);
   getFaceCoordinates(poses);

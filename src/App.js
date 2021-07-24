@@ -200,7 +200,7 @@ async function init() {
       plant.castShadow = true;
       plant.receiveShadow = false;
       if (touchscreen) {
-        plant.scale.set(0.5, 0.5, 0.45);
+        plant.scale.set(0.4, 0.4, 0.35);
       } else {
         plant.scale.set(0.22, 0.35, 0.22);
       }

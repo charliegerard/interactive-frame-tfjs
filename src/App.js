@@ -16,6 +16,7 @@ let bottomLeftCorner, bottomRightCorner, topLeftCorner;
 let detector;
 
 let plant;
+let defaultVideoWidth = 640;
 
 /* Detect if device is a touch screen or not */
 let touchscreen = "ontouchstart" in window ? true : false;
@@ -252,6 +253,13 @@ function onFaceMove(faceX, leftEyeYPosition) {
   cameraControls.handleFaceMoveRotate(faceX, leftEyeYPosition);
 }
 
+function scaleValue(value, from, to) {
+  var scale = (to[1] - to[0]) / (from[1] - from[0]);
+  var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+
+  return ~~(capped * scale + to[0]);
+}
+
 function getFaceCoordinates(poses) {
   const leftEye = poses[0]?.keypoints.filter(
     (keypoint) => keypoint.name === "left_eye"
@@ -259,21 +267,38 @@ function getFaceCoordinates(poses) {
   const rightEye = poses[0]?.keypoints.filter(
     (keypoint) => keypoint.name === "right_eye"
   )[0];
-  // const rightHand = poses[0]?.keypoints.filter(
-  //   (keypoint) => keypoint.name === "right_wrist"
-  // )[0];
 
-  const leftEyePosition = window.innerWidth - leftEye.x;
-  const rightEyePosition = window.innerWidth / 2 - rightEye.x;
-  // const rightWristPosition =
-  //   rightHand.score > 0.2 && window.innerWidth - rightHand.x;
-  const leftEyeYPosition = leftEye.y;
-  // const rightEyeYPosition = rightEye.y;
+  // the coordinates for the eyes will be based on the default size of the video element (640x480) so we need to do some calculation to make it match the window size instead
 
-  const middleEyes = leftEyePosition - rightEyePosition / 2;
+  /* 
+    min 0 - max 640
+    min 0 - max window.innerWidth (1300)
+
+  */
+
+  // let scaledYCoordinate = scaleValue(leftEye.x, [0, 640], [-85, 85]);
 
   if (leftEye.score > 0.7) {
-    onFaceMove(middleEyes, leftEyeYPosition);
+    let scaledLeftEyeXCoordinate = scaleValue(
+      leftEye.x,
+      [0, defaultVideoWidth],
+      [0, window.innerWidth]
+    );
+
+    let scaledRightEyeXCoordinate = scaleValue(
+      rightEye.x,
+      [0, defaultVideoWidth],
+      [0, window.innerWidth]
+    );
+
+    const leftEyePosition = window.innerWidth - scaledLeftEyeXCoordinate;
+    const rightEyePosition = window.innerWidth - scaledRightEyeXCoordinate;
+    const leftEyeYPosition = leftEye.y;
+
+    // const middleEyes = leftEyePosition - rightEyePosition / 2;
+
+    // onFaceMove(middleEyes, leftEyeYPosition);
+    onFaceMove(leftEyePosition, leftEyeYPosition);
   }
 }
 

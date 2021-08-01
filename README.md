@@ -6,7 +6,7 @@ A famous use of this effect can be seen in [Ghost Protocol](https://www.youtube.
 
 I wanted to experiment with making interactive art pieces so this project is a PWA that can be run fullscreen on an iPad.
 
-:info: This is a prototype made as a side project so the code is not production-ready. Its performance is not optimised so the first load can take a while. :info:
+:warning: This is a prototype made as a side project so the code is not production-ready. Its performance is not optimised so the first load can take a while. I developed and tested it on a Macbook Pro and iPad Pro so if you try it on another device and it doesn't work or doesn't look super responsive, I don't intend to fix it. With that in mind, here's the [live demo](https://interactive-frame.netlify.app) that works with both mouse movements and head-tracking. :warning:
 
 ## Demo
 

@@ -2,7 +2,7 @@
 
 Using [TensorFlow.js](https://www.tensorflow.org/js) and [Three.js](https://threejs.org/), this project is a prototype of an interactive digital art frame using head-tracking to create an effect of head-coupled perspective.
 
-A famous use of this effect can be found in the [Ghost Protocol](https://www.youtube.com/watch?v=ydIPKkjBlMw&t=30s) movie.
+A famous use of this effect can be seen in [Ghost Protocol](https://www.youtube.com/watch?v=ydIPKkjBlMw&t=30s).
 
 I wanted to experiment with making interactive art pieces so this project is a PWA that can be run fullscreen on an iPad.
 
